@@ -9,6 +9,9 @@ usernames = {}
 def handle_connections(conn, addr):
     with conn: 
         print("Connected by:", addr)
+        conn.send(("Enter your username: ").encode())
+        username = conn.recv(1024).decode().strip()
+        usernames[conn] = username
         while True:
             data = conn.recv(1024)
             if not data:
@@ -16,18 +19,12 @@ def handle_connections(conn, addr):
                 break
             for client in clients:
                 try:
-                    client.sendall(data)
+                    client.sendall(f"[{username}]: {data.decode()}")
                 except Exception as e:
                     print(f"Error sending to client {e}")
                     client.close()
                     clients.remove(client)
-def retrieve_username(conn):
-    username = input("Enter your usernmae: ")
-    with conn:
-        conn.send(username)
-        
-        
-
+                    del usernames[conn]
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serversocket:
     serversocket.bind((HOST, PORT))
