@@ -1,11 +1,17 @@
 def validate_username(username):
     username = username.strip()
     username = username.lower()
-    if(type(username) is not str):
-        raise ValueError("Username cannot contain numbers")
     if(not username):
-        raise ValueError("Username cannot be empty")
+        raise ValueError("empty")
     if(len(username) > 24):
-        raise ValueError("Username too long")
+        raise ValueError("too_long")
+    if(not namechars_check(username)):
+        raise ValueError("invalid_chars")
     return username
         
+def namechars_check(s):
+    for char in s:
+        if not char.isalpha():
+            return False
+    return True
+    
