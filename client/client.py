@@ -30,18 +30,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         enter_username = s.recv(1024).decode().strip()
         username = input(enter_username)
-        if(not username):
-            continue
+        while username.strip() == "":
+            username = input(enter_username)
         if(username):
             s.send(username.encode())
-            enter_username = s.recv(1024).decode().strip()
-            if(enter_username.startswith("Welcome")):
+            response = s.recv(1024).decode().strip()
+            if(response.startswith("Welcome")):
                 authenticated_username = True
                 break
             else:
-                print(enter_username)
+                print(response)
     #check for valid username
     if(authenticated_username):
+        print(PROMPT)
         send_thread = threading.Thread(target=send_message, args=(s,))
         send_thread.daemon = True
         send_thread.start()
