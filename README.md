@@ -49,4 +49,4 @@ python client/client.py
 
 ### Utilities
 
-- 
+- Validates username to ensure uniformity on server
