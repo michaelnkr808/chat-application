@@ -30,6 +30,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         enter_username = s.recv(1024).decode().strip()
         username = input(enter_username)
+        if(not username):
+            continue
         if(username):
             s.send(username.encode())
             enter_username = s.recv(1024).decode().strip()
