@@ -9,7 +9,7 @@ authenticated_username = False
 def send_message(s):
     while True:
         try:
-            message = input(PROMPT)
+            message = input()
             s.sendall(message.encode())
             if message == "quit":
                 try:
