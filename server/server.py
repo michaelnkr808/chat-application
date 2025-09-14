@@ -16,6 +16,7 @@ ERROR_MESSAGES = {
 def handle_connections(conn, addr):
     with conn: 
         print("Connected by:", addr)
+        #username authentication
         while True:
             try:
                 conn.sendall(("Enter your username (max: 24 characters and no numbers or symbols): ").encode())
@@ -24,19 +25,22 @@ def handle_connections(conn, addr):
                     clients.remove(conn)
                     if conn in usernames:
                         del usernames[conn]
-                    return
+                    return 
                 #imported from utils
                 validated_name = validate_username(username)
                 if any(validated_name == n.lower() for n in usernames.values()):
                     conn.sendall((ERROR_MESSAGES["taken"] + "\n").encode())
                     continue
                 usernames[conn] = validated_name
+                print(f"{validated_name} has entered the server.")
+                conn.sendall((f"Welcome {validated_name}\n").encode())
                 break
             except ValueError as e:
                 error_code = str(e)
                 message = ERROR_MESSAGES.get(error_code, "Invalid username.")
                 conn.sendall((message + "\n").encode())
                 continue
+        #message recieving logic
         while True:
             try:
                 data = conn.recv(1024)
