@@ -1,3 +1,10 @@
+HOST = "localhost"
+PORT = 9999
+PROMPT = "Enter a message ('quit' to close):"
+BUF_SIZE = 1024
+WELCOME_PREFIX = "Welcome"
+
+
 def validate_username(username):
     username = username.strip()
     username = username.lower()
