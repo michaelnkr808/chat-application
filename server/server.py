@@ -1,9 +1,7 @@
 import socket
 import threading
-from utils.common import validate_username
+from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX, validate_username
 
-HOST = '0.0.0.0'
-PORT = 9999
 clients = []
 usernames = {}
 ERROR_MESSAGES = {
@@ -20,7 +18,7 @@ def handle_connections(conn, addr):
         while True:
             try:
                 conn.sendall(("Enter your username (max: 24 characters and no numbers or symbols): ").encode())
-                username = conn.recv(1024).decode()
+                username = conn.recv(BUF_SIZE).decode()
                 if not username:
                     clients.remove(conn)
                     if conn in usernames:
@@ -33,7 +31,7 @@ def handle_connections(conn, addr):
                     continue
                 usernames[conn] = validated_name
                 print(f"{validated_name} has entered the server.")
-                conn.sendall((f"Welcome {validated_name}\n").encode())
+                conn.sendall((f"{WELCOME_PREFIX}{validated_name}\n").encode())
                 break
             except ValueError as e:
                 error_code = str(e)
@@ -43,7 +41,7 @@ def handle_connections(conn, addr):
         #message recieving logic
         while True:
             try:
-                data = conn.recv(1024)
+                data = conn.recv(BUF_SIZE)
                 if not data:
                     clients.remove(conn)
                     if conn in usernames:

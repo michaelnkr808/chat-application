@@ -1,8 +1,7 @@
 import socket
 import threading
+from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX
 
-HOST = 'localhost'
-PORT = 9999
 PROMPT = "Enter a message ('quit' to close): "
 authenticated_username = False
 
@@ -28,14 +27,14 @@ def send_message(s):
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     while True:
-        enter_username = s.recv(1024).decode().strip()
+        enter_username = s.recv(BUF_SIZE).decode().strip()
         username = input(enter_username)
         while username.strip() == "":
             username = input(enter_username)
         if(username):
             s.send(username.encode())
-            response = s.recv(1024).decode().strip()
-            if(response.startswith("Welcome")):
+            response = s.recv(BUF_SIZE).decode().strip()
+            if(response.startswith(WELCOME_PREFIX)):
                 authenticated_username = True
                 break
             else:
@@ -49,7 +48,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         if(authenticated_username):
             try:
-                data = s.recv(1024)
+                data = s.recv(BUF_SIZE)
                 if not data:
                     print("Client exited successfully")
                     break
