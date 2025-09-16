@@ -27,14 +27,16 @@ chat-app/
 ### Getting Started
 
 Running the Server:
+
+In a new terminal from the project dir
 ```
-python server/server.py
+python3 -m server.server
 ```
 Running the Client:
 
-In a new terminal:
+In a new terminal from the project dir:
 ```
-python client/client.py
+python3 -m client.client
 ```
 
 ### Prerequisites
@@ -50,3 +52,4 @@ python client/client.py
 ### Utilities
 
 - Validates username to ensure uniformity on server
+- Contains common variables used in both the server and client
