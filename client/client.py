@@ -14,13 +14,7 @@ def send_message(s):
             full_message = (f"[{datetime_sent}] " + f"{message_content}")
             if message_content.strip() == "":
                 continue
-            s.sendall(full_message.encode())
-            sys.stdout.write("\r")
-            sys.stdout.write("\x1b[1A")
-            sys.stdout.write("\x1b[2K")
-            sys.stdout.flush()
-    
-            if message_content == "quit":
+            if message_content.strip().lower() == "quit":
                 try:
                     s.shutdown(socket.SHUT_RDWR)
                 except Exception:
@@ -30,6 +24,12 @@ def send_message(s):
                 except Exception:
                     pass
                 break
+            else:
+                s.sendall(full_message.encode())
+                sys.stdout.write("\r")
+                sys.stdout.write("\x1b[1A")
+                sys.stdout.write("\x1b[2K")
+                sys.stdout.flush()
         except(BrokenPipeError, OSError):
             print("Client exited successfully")
             break

@@ -42,6 +42,11 @@ def handle_connections(conn, addr):
         while True:
             try:
                 data = conn.recv(BUF_SIZE)
+                if data.decode().lower() == "quit":
+                    clients.remove(conn)
+                    if conn in usernames:
+                        del usernames[conn]
+                    break
                 if not data:
                     clients.remove(conn)
                     if conn in usernames:
