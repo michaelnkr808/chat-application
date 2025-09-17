@@ -7,7 +7,7 @@ usernames = {}
 ERROR_MESSAGES = {
     "empty": "Username cannot be empty.",
     "too_long": "Username max 24 characters.",
-    "invalid_chars": "Letters only (no numbers or symbols).",
+    "invalid_chars": "Letters and numbers only",
     "taken": "That username is currently in use."
 }
 
@@ -17,7 +17,7 @@ def handle_connections(conn, addr):
         #username authentication
         while True:
             try:
-                conn.sendall(("Enter your username (max: 24 characters and no numbers or symbols): ").encode())
+                conn.sendall(("Enter your username (max: 24 characters and no symbols): ").encode())
                 username = conn.recv(BUF_SIZE).decode()
                 if not username:
                     clients.remove(conn)

@@ -1,14 +1,14 @@
+from pickle import TRUE
 import socket
 import threading
 from utils.common import HOST, PORT, PROMPT, BUF_SIZE, WELCOME_PREFIX
 
-PROMPT = "Enter a message ('quit' to close): "
 authenticated_username = False
 
 def send_message(s):
     while True:
         try:
-            message = input(PROMPT)
+            message = input()
             s.sendall(message.encode())
             if message == "quit":
                 try:
@@ -41,6 +41,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 print(response)
     #check for valid username
     if(authenticated_username):
+        print(PROMPT, end="", flush=True)
         send_thread = threading.Thread(target=send_message, args=(s,))
         send_thread.daemon = True
         send_thread.start()
