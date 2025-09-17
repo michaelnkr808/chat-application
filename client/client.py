@@ -1,6 +1,6 @@
 import socket
 import threading
-from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX
+from utils.common import HOST, PORT, PROMPT, BUF_SIZE, WELCOME_PREFIX
 
 PROMPT = "Enter a message ('quit' to close): "
 authenticated_username = False
@@ -8,7 +8,7 @@ authenticated_username = False
 def send_message(s):
     while True:
         try:
-            message = input()
+            message = input(PROMPT)
             s.sendall(message.encode())
             if message == "quit":
                 try:
@@ -41,7 +41,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 print(response)
     #check for valid username
     if(authenticated_username):
-        print(PROMPT)
         send_thread = threading.Thread(target=send_message, args=(s,))
         send_thread.daemon = True
         send_thread.start()
@@ -53,7 +52,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     print("Client exited successfully")
                     break
                 print(data.decode())
-                print(PROMPT, end='', flush=True)
             except Exception:
                 print("Client exited successfully")
                 break
