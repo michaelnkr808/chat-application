@@ -1,6 +1,6 @@
 HOST = "localhost"
 PORT = 9999
-PROMPT = "Welcome to the server. Enter a message to begin chatting! ('quit' to close):"
+PROMPT = "Welcome to the server. Enter a message to begin chatting! ('quit' to close): \n"
 BUF_SIZE = 1024
 WELCOME_PREFIX = "Welcome "
 

@@ -1,6 +1,7 @@
 import socket
 import threading
 from datetime import datetime
+import sys
 from utils.common import HOST, PORT, PROMPT, BUF_SIZE, WELCOME_PREFIX
 
 authenticated_username = False
@@ -14,6 +15,11 @@ def send_message(s):
             if message_content.strip() == "":
                 continue
             s.sendall(full_message.encode())
+            sys.stdout.write("\r")
+            sys.stdout.write("\x1b[1A")
+            sys.stdout.write("\x1b[2K")
+            sys.stdout.flush()
+    
             if message_content == "quit":
                 try:
                     s.shutdown(socket.SHUT_RDWR)
