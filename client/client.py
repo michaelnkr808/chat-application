@@ -1,6 +1,6 @@
-from pickle import TRUE
 import socket
 import threading
+from datetime import datetime
 from utils.common import HOST, PORT, PROMPT, BUF_SIZE, WELCOME_PREFIX
 
 authenticated_username = False
@@ -8,9 +8,13 @@ authenticated_username = False
 def send_message(s):
     while True:
         try:
-            message = input()
-            s.sendall(message.encode())
-            if message == "quit":
+            datetime_sent = datetime.now().strftime("%H:%M:%S")
+            message_content = input()
+            full_message = (f"[{datetime_sent}] " + f"{message_content}")
+            if message_content.strip() == "":
+                continue
+            s.sendall(full_message.encode())
+            if message_content == "quit":
                 try:
                     s.shutdown(socket.SHUT_RDWR)
                 except Exception:
