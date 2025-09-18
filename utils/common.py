@@ -6,6 +6,10 @@ BUF_SIZE = 1024
 WELCOME_PREFIX = "Welcome "
 CERT_PATH = "/Users/michaelr808/Desktop/Desktop - Michael’s MacBook Pro/projects/python/chat-app/certs/server.crt"
 KEY_PATH = "/Users/michaelr808/Desktop/Desktop - Michael’s MacBook Pro/projects/python/chat-app/certs/server.key"
+LOG_PATH = "/Users/michaelr808/Desktop/Desktop - Michael’s MacBook Pro/projects/python/chat-app/logs"
+LOG_LEVEL =
+LOG_ENCRYPTED = True/False
+ANALYTICS_FLUSH_SEC =
 
 
 def validate_username(username):
