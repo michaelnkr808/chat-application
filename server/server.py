@@ -58,6 +58,7 @@ def handle_connections(conn, addr):
                     break
             except OSError:
                 break
+            print(f"[{validated_name}]: {data.decode()}")
             for client in clients:
                 try:
                     client.sendall(f"[{validated_name}]: {data.decode()}".encode())
