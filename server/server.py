@@ -1,6 +1,7 @@
 import socket
 import threading
-from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX, validate_username
+import ssl
+from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX, validate_username, CERT_PATH, KEY_PATH
 
 clients = []
 usernames = {}
@@ -10,6 +11,9 @@ ERROR_MESSAGES = {
     "invalid_chars": "Letters and numbers only",
     "taken": "That username is currently in use."
 }
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context.load_cert_chain(certfile=CERT_PATH, keyfile=KEY_PATH)
 
 def handle_connections(conn, addr):
     with conn: 
@@ -68,8 +72,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serversocket:
     serversocket.listen(5)
     while True: 
         conn, addr = serversocket.accept()
-        connectThread = threading.Thread(target=handle_connections, args=(conn, addr))
-        clients.append(conn)
+        tls_conn = context.wrap_socket(conn, server_side=True)
+        connectThread = threading.Thread(target=handle_connections, args=(tls_conn, addr))
+        clients.append(tls_conn)
         connectThread.start()
         
 

@@ -2,7 +2,8 @@ import socket
 import threading
 from datetime import datetime
 import sys
-from utils.common import HOST, PORT, PROMPT, BUF_SIZE, WELCOME_PREFIX
+import ssl
+from utils.common import HOST, PORT, PROMPT, BUF_SIZE, WELCOME_PREFIX, SERVER_HOSTNAME, CERT_PATH
 
 authenticated_username = False
 
@@ -34,7 +35,12 @@ def send_message(s):
             print("Client exited successfully")
             break
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+ssl_context.check_hostname = True
+ssl_context.verify_mode = ssl.CERT_REQUIRED
+ssl_context.load_verify_locations(CERT_PATH)
+
+with ssl_context.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM), server_hostname=SERVER_HOSTNAME) as s:
     s.connect((HOST, PORT))
     while True:
         enter_username = s.recv(BUF_SIZE).decode().strip()
