@@ -1,6 +1,7 @@
 import socket
 import threading
 import ssl
+from datetime import datetime
 from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX, validate_username, CERT_PATH, KEY_PATH
 
 clients = []
@@ -11,15 +12,20 @@ ERROR_MESSAGES = {
     "invalid_chars": "Letters and numbers only",
     "taken": "That username is currently in use."
 }
-
+current_time = datetime.now().strftime("%H:%M:%S")
+current_date = datetime.now().strftime("%Y-%m-%d")
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(certfile=CERT_PATH, keyfile=KEY_PATH)
+
+def log_activity(log, entry):
+    log.write(entry)
 
 def handle_connections(conn, addr):
     with conn: 
         print("Connected by:", addr)
         #username authentication
         while True:
+            log_activity(l, data_entry)
             try:
                 conn.sendall(("Enter your username (max: 24 characters and no symbols): ").encode())
                 username = conn.recv(BUF_SIZE).decode()
@@ -42,6 +48,7 @@ def handle_connections(conn, addr):
                 message = ERROR_MESSAGES.get(error_code, "Invalid username.")
                 conn.sendall((message + "\n").encode())
                 continue
+
         #message recieving logic
         while True:
             try:
@@ -58,7 +65,9 @@ def handle_connections(conn, addr):
                     break
             except OSError:
                 break
-            print(f"[{validated_name}]: {data.decode()}")
+            data_entry = (f"[{validated_name}]: {data.decode()}")
+            log_activity(l, data_entry)
+            print(data_entry)
             for client in clients:
                 try:
                     client.sendall(f"[{validated_name}]: {data.decode()}".encode())
@@ -71,7 +80,8 @@ def handle_connections(conn, addr):
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serversocket:
     serversocket.bind((HOST, PORT))
     serversocket.listen(5)
-    while True: 
+    l = open(f"log:[{current_date}]", "x")
+    while True:
         conn, addr = serversocket.accept()
         tls_conn = context.wrap_socket(conn, server_side=True)
         connectThread = threading.Thread(target=handle_connections, args=(tls_conn, addr))
