@@ -1,6 +1,8 @@
 import socket
 import threading
 import ssl
+import os
+from pathLib import Path
 from datetime import datetime
 from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX, validate_username, CERT_PATH, KEY_PATH
 
@@ -12,20 +14,29 @@ ERROR_MESSAGES = {
     "invalid_chars": "Letters and numbers only",
     "taken": "That username is currently in use."
 }
+LOG_FILE = None
 current_time = datetime.now().strftime("%H:%M:%S")
-current_date = datetime.now().strftime("%Y-%m-%d")
+current_datetime = datetime.now().strftime("%YYYY-%MM-DD-%H:%M:%S")
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(certfile=CERT_PATH, keyfile=KEY_PATH)
 
-def log_activity(log, entry):
-    log.write(entry)
+def check_logs():
+    base_dir = Path(__file__).resolve().parents[1]
+    logs_dir = base_dir / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    return logs_dir
+
+def create_log(path):
+    try:
+        with open(f"[{current_datetime}]", "x") as l:
+    except:
+
 
 def handle_connections(conn, addr):
     with conn: 
         print("Connected by:", addr)
         #username authentication
         while True:
-            log_activity(l, data_entry)
             try:
                 conn.sendall(("Enter your username (max: 24 characters and no symbols): ").encode())
                 username = conn.recv(BUF_SIZE).decode()
@@ -66,7 +77,6 @@ def handle_connections(conn, addr):
             except OSError:
                 break
             data_entry = (f"[{validated_name}]: {data.decode()}")
-            log_activity(l, data_entry)
             print(data_entry)
             for client in clients:
                 try:
@@ -80,7 +90,7 @@ def handle_connections(conn, addr):
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serversocket:
     serversocket.bind((HOST, PORT))
     serversocket.listen(5)
-    l = open(f"log:[{current_date}]", "x")
+    create_log()
     while True:
         conn, addr = serversocket.accept()
         tls_conn = context.wrap_socket(conn, server_side=True)
