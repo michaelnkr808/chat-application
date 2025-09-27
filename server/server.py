@@ -45,7 +45,7 @@ def append_log(line: str):
 def handle_connections(conn, addr):
     with conn: 
         print("Connected by:", addr)
-        append_log(f"Client connected addr={addr[0]}:{addr[1]}")
+        append_log(f"client connected addr={addr[0]}:{addr[1]}")
         #username authentication
         while True:
             try:
@@ -63,6 +63,7 @@ def handle_connections(conn, addr):
                     continue
                 usernames[conn] = validated_name
                 print(f"{validated_name} has entered the server.")
+                append_log(f"user authenticated addr={addr[0]}:{addr[1]} user={validated_name}")
                 conn.sendall((f"{WELCOME_PREFIX}{validated_name}\n").encode())
                 break
             except ValueError as e:
@@ -88,6 +89,7 @@ def handle_connections(conn, addr):
             except OSError:
                 break
             data_entry = (f"[{validated_name}]: {data.decode()}")
+            append_log(f"msg addr={addr[0]}:{addr[1]} user={validated_name} {data.decode()}")
             print(data_entry)
             for client in clients:
                 try:
