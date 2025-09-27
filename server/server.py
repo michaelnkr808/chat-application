@@ -2,7 +2,7 @@ import socket
 import threading
 import ssl
 import os
-from pathLib import Path
+from pathlib import Path
 from datetime import datetime
 from utils.common import HOST, PORT, BUF_SIZE, WELCOME_PREFIX, validate_username, CERT_PATH, KEY_PATH
 
@@ -16,7 +16,6 @@ ERROR_MESSAGES = {
 }
 LOG_FILE = None
 current_time = datetime.now().strftime("%H:%M:%S")
-current_datetime = datetime.now().strftime("%YYYY-%MM-DD-%H:%M:%S")
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(certfile=CERT_PATH, keyfile=KEY_PATH)
 
@@ -26,15 +25,27 @@ def check_logs():
     logs_dir.mkdir(parents=True, exist_ok=True)
     return logs_dir
 
-def create_log(path):
+def create_log(logs_dir: Path):
+    run_id = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    log_path = logs_dir / f"chat-{run_id}.log"
+    log_path.touch(exist_ok=False)
+    return str(log_path)
+
+def append_log(line: str):
+    if not LOG_FILE:
+        return
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
-        with open(f"[{current_datetime}]", "x") as l:
-    except:
+        with open(LOG_FILE, "a", encoding=utf-8) as f:
+            f.write(f"{ts}, {line}\n")
+    except Exception:
+        pass
 
 
 def handle_connections(conn, addr):
     with conn: 
         print("Connected by:", addr)
+        append_log(f"Client connected addr={addr[0]}:{addr[1]}")
         #username authentication
         while True:
             try:
@@ -90,7 +101,8 @@ def handle_connections(conn, addr):
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serversocket:
     serversocket.bind((HOST, PORT))
     serversocket.listen(5)
-    create_log()
+    logs_dir = check_logs()
+    LOG_FILE = create_log(logs_dir)
     while True:
         conn, addr = serversocket.accept()
         tls_conn = context.wrap_socket(conn, server_side=True)
