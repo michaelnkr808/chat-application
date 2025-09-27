@@ -77,11 +77,13 @@ def handle_connections(conn, addr):
             try:
                 data = conn.recv(BUF_SIZE)
                 if data.decode().lower() == "quit":
+                    append_log(f"client quit addr={addr[0]}:{addr[1]} user={validated_name}")
                     clients.remove(conn)
                     if conn in usernames:
                         del usernames[conn]
                     break
                 if not data:
+                    append_log(f"client disconnected addr={addr[0]}:{addr[1]} user={validated_name}")
                     clients.remove(conn)
                     if conn in usernames:
                         del usernames[conn]
