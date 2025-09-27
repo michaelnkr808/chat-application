@@ -97,6 +97,7 @@ def handle_connections(conn, addr):
                 try:
                     client.sendall(f"[{validated_name}]: {data.decode()}".encode())
                 except Exception as e:
+                    append_log(f"send failed addr={addr[0]}:{addr[1]} user={validated_name} error={e}")
                     print(f"Error sending to client {e}")
                     client.close()
                     clients.remove(client)
